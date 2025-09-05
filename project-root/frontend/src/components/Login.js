@@ -7,14 +7,17 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showReset, setShowReset] = useState(false);
+  const [loading, setLoading] = useState(false); // <-- Add loading state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
     });
+    setLoading(false); // Stop loading
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem("user", JSON.stringify(data));
@@ -29,7 +32,11 @@ export default function Login({ onLogin }) {
     <div className="login-container">
       <div className="login-box">
         <h2 className="login-title">Login</h2>
-        {!showReset ? (
+        {loading ? (
+          <div style={{ color: "#3B3B98", fontWeight: "bold", margin: "18px 0" }}>
+            Please wait...
+          </div>
+        ) : !showReset ? (
           <>
             <form className="login-form" onSubmit={handleSubmit}>
               <input className="login-input" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />

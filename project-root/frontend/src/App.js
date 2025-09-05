@@ -152,7 +152,7 @@ export default function App() {
           user={user}
           onUpdate={updatedUser => setUser(updatedUser)}
         />
-        {accuracyPercent === 100 && (
+        {completedCount > 0 && accuracyPercent === 100 && (
           <div className="badge">
             <span role="img" aria-label="star">🏅</span> Perfect Score!
           </div>
@@ -161,8 +161,18 @@ export default function App() {
         <p><strong>Username:</strong> {user.username}</p>
         <PieChart percent={percent} fillColor="#F7B731" /> {/* Lessons Completed */}
         <p className="lessons-completed-label">Lessons Completed</p>
-        <PieChart percent={accuracyPercent} stroke={14} size={100} fillColor="#EA5B6F" /> {/* Accuracy */}
-        <p className="accuracy-label">Accuracy</p>
+        {completedCount > 0 ? (
+          <>
+            <PieChart percent={accuracyPercent} stroke={14} size={100} fillColor="#EA5B6F" />
+            <p className="accuracy-label">Accuracy</p>
+          </>
+        ) : (
+          <>
+            <PieChart percent={0} stroke={14} size={100} fillColor="#EA5B6F" />
+            <p className="accuracy-label">Accuracy</p>
+            <p style={{ color: "#888", fontSize: "0.95rem" }}>Complete a lesson to see your accuracy!</p>
+          </>
+        )}
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
