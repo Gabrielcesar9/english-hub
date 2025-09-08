@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import '../main.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -7,22 +7,36 @@ export default function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showReset, setShowReset] = useState(false);
-  const [loading, setLoading] = useState(false); // <-- Add loading state
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(60); // default to 60 seconds
+
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      setCountdown(60); // reset countdown when loading starts
+      timer = setInterval(() => {
+        setCountdown(prev => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+    } else {
+      setCountdown(60); // reset when not loading
+    }
+    return () => clearInterval(timer);
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
     });
-    setLoading(false); // Stop loading
+    setLoading(false);
     if (res.ok) {
       const data = await res.json();
       localStorage.setItem("user", JSON.stringify(data));
-      onLogin(data); // data should include lessonMistakes
-      localStorage.setItem("token", data.token); // Store the token
+      onLogin(data);
+      localStorage.setItem("token", data.token);
     } else {
       setError("Invalid username or password");
     }
@@ -34,7 +48,7 @@ export default function Login({ onLogin }) {
         <h2 className="login-title">Login</h2>
         {loading ? (
           <div style={{ color: "#3B3B98", fontWeight: "bold", margin: "18px 0" }}>
-            Please wait...
+            Please wait... (up to {countdown} seconds)
           </div>
         ) : !showReset ? (
           <>
