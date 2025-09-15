@@ -26,10 +26,11 @@ export default function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const trimmedUsername = username.trim(); // Remove leading/trailing spaces
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: trimmedUsername, password })
     });
     setLoading(false);
     if (res.ok) {

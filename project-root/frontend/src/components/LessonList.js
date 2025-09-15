@@ -76,7 +76,7 @@ export default function LessonList({ user, lessons, onUserUpdate }) {
   return (
     <div className="dashboard-container">
       <h1 style={{ textAlign: "left" }}>Select a lesson:</h1>
-      <br></br>
+      <br />
       <div className="lesson-list">
         {lessons.length === 0 ? (
           <p>Loading lessons...</p>
@@ -85,11 +85,23 @@ export default function LessonList({ user, lessons, onUserUpdate }) {
             const isCompleted = completedLessons.includes(lesson._id);
             const accuracy = getAccuracyForLesson(lesson);
             return (
-              <div key={lesson._id} className="lesson-item">
+              <button
+                key={lesson._id}
+                className={`lesson-item${isCompleted ? " completed" : ""}`}
+                onClick={() => setSelectedLessonId(lesson._id)}
+                style={{
+                  border: "none",
+                  background: "none",
+                  padding: 0,
+                  width: "100%",
+                  textAlign: "left",
+                  cursor: "pointer"
+                }}
+              >
                 <div className="lesson-thumbnail-title">{lesson.title}</div>
-                <button
-                  onClick={() => setSelectedLessonId(lesson._id)}
-                  className={`lesson-thumbnail-btn${isCompleted ? " completed" : ""}`}
+                <div
+                  className="lesson-thumbnail-btn"
+                  style={{ pointerEvents: "none" }}
                 >
                   <div
                     className="lesson-thumbnail-bg"
@@ -99,7 +111,7 @@ export default function LessonList({ user, lessons, onUserUpdate }) {
                         : `url('https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=400&q=80')`
                     }}
                   />
-                </button>
+                </div>
                 {lesson.description && (
                   <p className="lesson-description">{lesson.description}</p>
                 )}
@@ -107,7 +119,11 @@ export default function LessonList({ user, lessons, onUserUpdate }) {
                   <>
                     <button
                       className="lesson-notes-btn"
-                      onClick={() => handleOpenNotes(lesson._id)}
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleOpenNotes(lesson._id);
+                      }}
                     >
                       Show Notes
                     </button>
@@ -124,6 +140,7 @@ export default function LessonList({ user, lessons, onUserUpdate }) {
                           </div>
                           <button
                             className="lesson-notes-close-btn"
+                            type="button"
                             onClick={handleCloseNotes}
                           >
                             Close
@@ -138,7 +155,7 @@ export default function LessonList({ user, lessons, onUserUpdate }) {
                     <strong>Accuracy:</strong> {accuracy}
                   </p>
                 )}
-              </div>
+              </button>
             );
           })
         )}
